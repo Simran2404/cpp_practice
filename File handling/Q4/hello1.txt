@@ -1,0 +1,8 @@
+While many of us have been forced to at least try to understand 
+what an NFT is over the last year or so, the latest figures from 
+Google Trends suggest that this research has not led to a sustained 
+interest in the topic. 
+For those that haven't as yet attempted to get to grips with the phenomenon, 
+here's Wikipedia to the rescue: "A non-fungible token (NFT) is a non-interchangeable 
+unit of data stored on a blockchain, a form of digital ledger, that can be sold and traded. 
+Types of NFT data units may be associated with digital files such as photos, videos, and audio."

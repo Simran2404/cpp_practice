@@ -1,0 +1,8 @@
+letter case is generally applied in mixedcase fashion
+with both upper and lowercase letters appearing in given
+piece of text for legibility The choice of case is often 
+prescribed by grammar of language or by conventions 
+of particular discipline in orthography uppercase is 
+primarily reserved for special purposes such as first 
+letter of sentence or of proper noun called capitalisation
+or capitalised words which makes lowercase more common variant in regular 
