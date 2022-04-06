@@ -3,7 +3,7 @@
 struct String
 {
 	char array[50];
-	int size = 0;
+	int length = 0;
 	int capacity = 50;
 };
 

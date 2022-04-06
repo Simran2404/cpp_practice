@@ -10,15 +10,10 @@ int string_size(const char* word)
 	return len;
 }
 
-String::String(const char* word)
+String::String()
 {
-	size = string_size(word);  //
-	array = (char*)malloc(size + 1);
-
-	for (int i = 0; i < size; i++) {
-		array[i] = word[i];
-	}
-	array[size] = 0;
+	array = nullptr;
+	length = 0;
 }
 
 void String::print()
@@ -26,9 +21,38 @@ void String::print()
 	std::cout << array << std::endl; //you can directly give character pointers to cout if you have a null terminating string 
 }
 
-const char* String::concatenate(const char* new_word) //we don't need to pass the string as a parameter again because our function here is a method defined int the class itself
+//parameterized constructor
+String::String(const char* word)  /*constructors just allow you to automatically initialise objects so
+									 you don't have to call functions to initialise them yourself*/
 {
-	int string_len = size;
+	length = string_size(word);
+	array = (char*)malloc(length + 1);
+
+	for (int i = 0; i < length; i++) {
+		array[i] = word[i];
+	}
+	array[length] = 0;
+}
+
+int String::size() const
+{
+	return length;
+}
+
+String::String(String const& s2) //copy constructor
+{
+	length = s2.size();
+	array = (char*)malloc(s2.size() + 1);
+	for (int i = 0; i < s2.size(); i++) {
+		array[i] = s2.array[i];
+	}
+	array[length] = 0;
+	std::cout << "copy constructor\n";
+}
+
+String& String::concatenate(const char* new_word) //we don't need to pass the string as a parameter again because our function here is a method defined int the class itself
+{
+	int string_len = length;
 	int new_word_len = string_size(new_word);
 	int final_word_len = string_len + new_word_len;
 	char* final_word = (char*)malloc((final_word_len + 1)); //assigning memory for the new concatenated word
@@ -46,34 +70,54 @@ const char* String::concatenate(const char* new_word) //we don't need to pass th
 	free(array); //freeing the original array to avoid memory leaks
 	array = final_word; //pointing the new array to our final word
 
-	size = final_word_len;
-	return final_word;
+	length = final_word_len;
+	return *this;
 }
 
-const char* String::to_uppercase()
+String& String::concatenate(String& word)
 {
-	for (int i = 0; i < size; i++) {
+	int word_len = word.size();
+	int final_word_len = length + word_len;
+	char* final_word = (char*)malloc((final_word_len + 1)); //assigning memory for the new concatenated word
+
+	for (int i = 0; i < length; i++) {  //copying the original word to final word
+		final_word[i] = array[i];
+	}
+
+	for (int i = 0; i < word_len; i++) {  //copying the new word to final word
+		final_word[i + length] = word.array[i];
+	}
+	final_word[final_word_len] = 0;
+	free(array);
+	length = final_word_len;   //maintaining the state of the object 
+	array = final_word;
+	return *this;
+}
+
+String& String::to_uppercase()
+{
+	for (int i = 0; i < length; i++) {
 		if (array[i] >= 'a' && array[i] <= 'z') {
 			array[i] = array[i] - 32;
 		}
 	}
-	return array;
+	return *this;
 }
 
-const char* String::to_lowercase()
+String& String::to_lowercase()
 {
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < length; i++) {
 		if (array[i] >= 'A' && array[i] <= 'Z') {
 			array[i] = array[i] + 32;
 		}
 	}
-	return array;
+	return *this;
 }
 
-const char* String::to_titlecase()
+String& String::to_titlecase()
 {
 	array[0] = array[0] - 32;
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < length; i++) {
 
 		if (array[i] != ' ') {
 			continue;
@@ -87,10 +131,10 @@ const char* String::to_titlecase()
 			}
 		}
 	}
-	return array;
+	return *this;
 }
 
-const char* String::reverse_string()
+String& String::reverse_string()
 {
 	int string_len = string_size(array);
 	char temp;
@@ -102,10 +146,85 @@ const char* String::reverse_string()
 		array[i] = temp;
 		word_counter++;
 	}
-	return array;
+	return *this;
 }
 
 String::~String()
 {
 	free(array);
+}
+
+
+//operator overloading
+
+String& String::operator+(String& word)
+{
+	return concatenate(word);
+}
+
+String& String::operator+(const char* new_word)
+{
+	return concatenate(new_word);
+}
+
+String& String::operator=(String& word)
+{
+	if (array == word.array) {
+		return *this;
+	}
+	free(array);
+	length = word.size();
+	array = (char*)malloc(word.size() + 1);
+	for (int i = 0; i < word.size(); i++) {
+		array[i] = word.array[i];
+	}
+	array[length] = 0;
+	std::cout << "copy assignment operator\n";
+	return *this;
+}
+
+String& String::operator=(const char* new_word)
+{
+	if (array == new_word) {
+		return *this;
+	}
+
+	free(array); //no action occurs when the array which is initially set to nullptr otherwise it frees garbage values
+	int word_length = string_size(new_word);
+	array = (char*)malloc(word_length + 1);
+	for (int i = 0; i < word_length; i++) {
+		array[i] = new_word[i];
+	}
+	array[word_length] = 0;
+	std::cout << "assignment operator with char*\n";
+	return *this;
+}
+
+String operator+(const char* word1, String& word2)
+{
+	String final_word = word1;
+	final_word = final_word.concatenate(word2);
+	return final_word; 
+}
+
+String::String(String&& s)
+{
+	array = s.array;
+	s.array = nullptr;
+	length = s.length;
+	s.length = 0;
+
+	std::cout << "Move constructor" << std::endl;
+}
+
+String& String::operator=(String&& s)
+{
+	free(array);
+	array = s.array;
+	s.array = nullptr;
+	length = s.length;
+	s.length = 0;
+
+	std::cout << "Move assignment" << std::endl;
+	return *this;
 }
