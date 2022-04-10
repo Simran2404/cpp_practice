@@ -1,7 +1,7 @@
 #include "customstrings.hpp"
 #include <iostream>
 
-int string_size(const char *word) // for the length of the const char* parameters
+int string_size(const char *word)
 {
 	int len = 0;
 	for (int i = 0; word[i] != 0; i++)
@@ -15,11 +15,12 @@ String::String() // default constructor
 {
 	array = nullptr;
 	length = 0;
+	std::cout << "DEFAULT CONSTRUCTOR\n";
 }
 
 void String::print()
 {
-	std::cout << array << std::endl; // cout prints out character wise till a null terminating string (without a for loop)
+	std::cout << array << std::endl; // you can directly give character pointers to cout if you have a null terminating string
 }
 
 // parameterized constructor
@@ -27,7 +28,7 @@ String::String(const char *word) /*constructors just allow you to automatically 
 									you don't have to call functions to initialise them yourself*/
 {
 	length = string_size(word);
-	array = (char *)malloc(length + 1);
+	array = new char[length + 1];
 
 	for (int i = 0; i < length; i++)
 	{
@@ -36,20 +37,16 @@ String::String(const char *word) /*constructors just allow you to automatically 
 	array[length] = 0;
 }
 
-int String::size() const // for the length of the string
+int String::size() const
 {
 	return length;
 }
 
-// shallow copies of a pointer just copy the address of the pointer and do not allocate any memory or copy the contents being pointed to
-// deep copying allocates memory for the copy and then copies the actual value, so that the copy lives in distinct memory from the source.
-// copy constructors and overloaded assignment operators are written for deep copying
-
-String::String(String const &s2) // copy constructors create new copies of already existing objects
+String::String(String const &s2) // copy constructor
 {
 	length = s2.size();
-	array = (char *)malloc(s2.size() + 1);
-	for (int i = 0; i < length; i++)
+	array = new char[s2.size() + 1];
+	for (int i = 0; i < s2.size(); i++)
 	{
 		array[i] = s2.array[i];
 	}
@@ -58,12 +55,12 @@ String::String(String const &s2) // copy constructors create new copies of alrea
 }
 
 String &String::concatenate(const char *new_word) /*we don't need to pass the string as a parameter again because our
-													function here is a method defined in the class itself*/
+													function here is a method defined int the class itself*/
 {
 	int string_len = length;
 	int new_word_len = string_size(new_word);
 	int final_word_len = string_len + new_word_len;
-	char *final_word = (char *)malloc((final_word_len + 1)); // assigning memory for the new concatenated word
+	char *final_word = new char[final_word_len + 1]; // assigning memory for the new concatenated word
 
 	for (int i = 0; i < string_len; i++)
 	{ // copying the original word to final word
@@ -77,7 +74,7 @@ String &String::concatenate(const char *new_word) /*we don't need to pass the st
 
 	final_word[final_word_len] = 0;
 
-	free(array);		// freeing the original array to avoid memory leaks
+	delete[] array;		// freeing the original array to avoid memory leaks
 	array = final_word; // pointing the new array to our final word
 
 	length = final_word_len;
@@ -88,7 +85,7 @@ String &String::concatenate(String &word)
 {
 	int word_len = word.size();
 	int final_word_len = length + word_len;
-	char *final_word = (char *)malloc((final_word_len + 1)); // assigning memory for the new concatenated word
+	char *final_word = new char[final_word_len + 1]; // assigning memory for the new concatenated word
 
 	for (int i = 0; i < length; i++)
 	{ // copying the original word to final word
@@ -100,7 +97,7 @@ String &String::concatenate(String &word)
 		final_word[i + length] = word.array[i];
 	}
 	final_word[final_word_len] = 0;
-	free(array);
+	delete[] array;
 	length = final_word_len; // maintaining the state of the object
 	array = final_word;
 	return *this;
@@ -170,9 +167,9 @@ String &String::reverse_string()
 	return *this;
 }
 
-String::~String() // destructors are usually called as soon as it exits the object scope it was declared in
+String::~String() // destructor
 {
-	free(array);
+	delete[] array;
 }
 
 // operator overloading
@@ -187,15 +184,15 @@ String &String::operator+(const char *new_word)
 	return concatenate(new_word);
 }
 
-String &String::operator=(String &word) // assignment operator just changes the values of the existing objects
+String &String::operator=(String &word)
 {
 	if (array == word.array)
 	{
 		return *this;
 	}
-	free(array);
+	delete[] array;
 	length = word.size();
-	array = (char *)malloc(word.size() + 1);
+	array = new char[word.size() + 1];
 	for (int i = 0; i < word.size(); i++)
 	{
 		array[i] = word.array[i];
@@ -212,9 +209,9 @@ String &String::operator=(const char *new_word)
 		return *this;
 	}
 
-	free(array); // no action occurs when the array which is initially set to nullptr otherwise it frees garbage values
+	delete[] array; // no action occurs when the array which is initially set to nullptr otherwise it frees garbage values
 	int word_length = string_size(new_word);
-	array = (char *)malloc(word_length + 1);
+	array = new char[word_length + 1];
 	for (int i = 0; i < word_length; i++)
 	{
 		array[i] = new_word[i];
@@ -231,24 +228,24 @@ String operator+(const char *word1, String &word2)
 	return final_word;
 }
 
-// String::String(String &&s)
-// {
-// 	array = s.array;
-// 	s.array = nullptr;
-// 	length = s.length;
-// 	s.length = 0;
+String::String(String &&s)
+{
+	array = s.array;
+	s.array = nullptr;
+	length = s.length;
+	s.length = 0;
 
-// 	std::cout << "Move constructor" << std::endl;
-// }
+	std::cout << "Move constructor" << std::endl;
+}
 
-// String &String::operator=(String &&s)
-// {
-// 	free(array);
-// 	array = s.array;
-// 	s.array = nullptr;
-// 	length = s.length;
-// 	s.length = 0;
+String &String::operator=(String &&s)
+{
+	delete[] array;
+	array = s.array;
+	s.array = nullptr;
+	length = s.length;
+	s.length = 0;
 
-// 	std::cout << "Move assignment" << std::endl;
-// 	return *this;
-// }
+	std::cout << "Move assignment" << std::endl;
+	return *this;
+}

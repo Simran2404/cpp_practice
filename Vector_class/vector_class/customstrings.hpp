@@ -10,8 +10,8 @@ struct String
 	String();				  // default constructor
 	String(const char *word); // parameterized constructor
 	String(String const &s);  // copy constructor
-	// String(String &&s);
-	// String &operator=(String &&s);
+	String(String &&s);
+	String &operator=(String &&s);
 
 	void print();
 	int size() const;
@@ -29,5 +29,4 @@ struct String
 	String &operator+(const char *new_word);
 };
 
-String operator+(const char *word1, String &word2); /*we declare it as a function and not as a method because we
- don't want the first parameter to be the this keyword that is a string object*/
+String operator+(const char *word1, String &word2);

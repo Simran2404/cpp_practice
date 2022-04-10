@@ -4,6 +4,7 @@
 
 int main()
 {
+
 	String s("an ipad and a samsung galaxy");
 	s.print();
 	s.concatenate("war");
@@ -17,6 +18,7 @@ int main()
 	s.reverse_string();
 	s.print();
 	String s2(s);
+	s.concatenate(s2);
 	s2.print();
 	String s4("wa war war warrrrrrr");
 	String s3 = s + s4;
@@ -27,6 +29,6 @@ int main()
 	String s6;
 	s6 = "dsfasfad";
 	s6.print();
-	s6 = "wa war warr warrr" + s +"dskfhskdfh" + "asdas" + s2;
+	s6 = "wa war warr warrr" + s + "dskfhskdfh" + "asdas" + s2;
 	s6.print();
 }
