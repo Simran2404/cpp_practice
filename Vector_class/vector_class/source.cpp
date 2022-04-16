@@ -3,29 +3,20 @@
 #include <iostream>
 #include <string>
 #include<cassert>
-#include<vector>
+#include<stack>
 
 int main()
 {
-	Vector<String> arr;
-	Vector<int> ar;
-	//String s = "simran";
-	arr.pushback("simran");
-	arr.pushback("malab");
-	arr.pushback("gurnoor");
-	//arr.print();
-	arr.popback();
-	//arr.print();
+	//string reverse
+	std::string str = "simran";
+	std::stack<char> word;
+	for (int i = 0; i < str.size(); i++) {
+		word.push(str[i]);
+	}
 
-	ar.pushback(56);
-	ar.pushback(13);
-	ar.pushback(32);
-	ar.pushback(38);
-	ar.pushback(36);
-	ar.insert(4, 245);
-	ar.print();
-	cout << "\n";
-	ar.remove(5);
-	ar.print();
-	cout << "\n";
+	while (!word.empty()) {
+		std::cout << word.top();
+		word.pop();
+	}
 }
+
