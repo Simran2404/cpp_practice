@@ -18,18 +18,7 @@ bool isValid(std::string s)
 				return 0;
 			}
 		}
-		else if (s[i] == ']') {
-			if (word.empty()) {
-				return 0;
-			}
 
-			if (word.top() == '[') {
-				word.pop();
-			}
-			else {
-				return 0;
-			}
-		}
 		else if (s[i] == '}') {
 			if (word.empty()) {
 				return 0;
@@ -42,11 +31,23 @@ bool isValid(std::string s)
 				return 0;
 			}
 		}
+
+		else if (s[i] == ']') {
+			if (word.empty()) {
+				return 0;
+			}
+
+			if (word.top() == '[') {
+				word.pop();
+			}
+			else {
+				return 0;
+			}
+		}
 		else {
 			word.push(s[i]);
 		}
 	}
-
 	if (word.empty()) {
 		return 1;
 	}
@@ -57,7 +58,7 @@ bool isValid(std::string s)
 
 int main()
 {
-	std::string s = "()";
+	std::string s = "()[]{}";
 	std::cout << isValid(s);
 }
 
